@@ -1,25 +1,44 @@
-// create a real server
-// file base routing and Resource based routing
-// parmas or parameter and query parameters (query string)
+// Also learn get json data from responce
+// conver a json data to html page
 
 const http = require("node:http");
 const fs = require("fs");
+const html = fs.readFileSync("./index.html", "utf-8");
+const bloglist = fs.readFileSync("./postlist.html", "utf-8");
+const allposts = JSON.parse(fs.readFileSync("./data.json", "utf-8"));
+
+const finalPostData = allposts.map((post) => {
+  let output = bloglist.replace("{{%PostNumber%}}", post.id);
+  output = output.replace("{{%PostTitle%}}", post.title);
+  output = output.replace("{{%postDesctiption%}}", post.body);
+  return output;
+});
 
 const server = http.createServer((request, response) => {
   let path = request.url;
-  console.log(path);
   if ((path === "/home") | (path === "/")) {
-    response.end("this is our home page");
+    response.writeHead(200, {
+      "Content-Type": "text/html",
+    });
+    response.end(html.replace("{{%pageHeading%}}", "This is our home page"));
   } else if (path === "/about") {
-    const html = fs.readFileSync("./index.html", "utf-8");
-    response.end(html);
+    response.writeHead(200, {
+      "Content-Type": "text/html",
+    });
+    response.end(html.replace("{{%pageHeading%}}", "this is our about page"));
+  } else if (path === "/getdata") {
+    response.writeHead(200, {
+      "Content-Type": "text/html",
+    });
+    response.end(
+      html.replace("{{%pageHeading%}}", finalPostData.slice(",").join(" "))
+    );
   } else {
-    response.end("<h2>Page Not Found</h2>");
+    response.writeHead(404, {
+      "Content-Type": "text/html",
+    });
+    response.end(html.replace("{{%pageHeading%}}", "No Page Found!"));
   }
-
-  // console.log(request.method);
-
-  // response.end("this is our home page");
 });
 
 server.listen(8080, () => {
