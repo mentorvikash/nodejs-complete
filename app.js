@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 const fs = require("fs");
 const port = 4000;
 let app = express();
@@ -11,9 +12,11 @@ const simpleConsole = (req, res, next) => {
 
 // middleware
 app.use(express.json());
-// custom middlewares
-app.use(simpleConsole);
-// manupulate req object
+app.use(morgan("dev"));
+
+// // custom middlewares
+// app.use(simpleConsole);
+// // manupulate req object
 app.use((req, res, next) => {
   req.presentdate = new Date();
   next();

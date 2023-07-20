@@ -2,13 +2,28 @@
 
 // ================== app.js
 const express = require("express");
+const morgan = require("morgan");
 const fs = require("fs");
 const port = 4000;
 let app = express();
 const userData = JSON.parse(fs.readFileSync("userData.json", "utf-8"));
 
+const simpleConsole = (req, res, next) => {
+  console.log("I got printed every time for " + req.url);
+  next();
+};
+
 // middleware
 app.use(express.json());
+app.use(morgan("dev"));
+
+// // custom middlewares
+// app.use(simpleConsole);
+// // manupulate req object
+app.use((req, res, next) => {
+  req.presentdate = new Date();
+  next();
+});
 
 // Route = http method + url
 app.get("/", (req, res) => {
@@ -26,9 +41,12 @@ app.get("/jsonData", (req, res) => {
 });
 
 const getAllUsers = (req, res) => {
-  res
-    .status(200)
-    .json({ success: true, count: userData.length, data: { userData } });
+  res.status(200).json({
+    success: true,
+    presentdate: req.presentdate,
+    count: userData.length,
+    data: { userData },
+  });
 };
 
 const getUserById = (req, res) => {
