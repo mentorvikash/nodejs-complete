@@ -1,0 +1,16 @@
+body {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+}
+
+.container {
+  width: 600px;
+  line-height: 0;
+  border: 1px solid black;
+  box-shadow: 3px 4px 10px red;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+}

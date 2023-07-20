@@ -6,6 +6,7 @@ const userRouter = require("./routes/userRoute");
 // middleware
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(express.static("./public"));
 app.use((req, res, next) => {
   req.presentdate = new Date();
   next();
