@@ -10,12 +10,12 @@ const {
   validateBody,
 } = UserController;
 
-const route = express.Router();
+const router = express.Router();
 
-route.param("id", checkId);
+router.param("id", checkId);
 
-route.route("/").get(getAllUsers).post(validateBody, createUser);
+router.route("/").get(getAllUsers).post(validateBody, createUser);
 
-route.route("/:id").get(getUserById).patch(updateUser).delete(deleteUser);
+router.route("/:id").get(getUserById).patch(updateUser).delete(deleteUser);
 
-module.exports = route;
+module.exports = router;

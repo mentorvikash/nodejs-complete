@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 let app = express();
 const userRouter = require("./routes/userRoute");
+const movieRouter = require("./routes/movieRoute");
 
 // middleware
 
@@ -17,5 +18,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/user", userRouter);
+app.use("/api/movie", movieRouter);
 
 module.exports = app;

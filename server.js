@@ -1,7 +1,18 @@
 const app = require("./app.js");
 const dotenv = require("dotenv");
-dotenv.config({ path: "./config.env" });
+const mongoose = require("mongoose");
 const port = process.env.PORT || 4000;
+
+dotenv.config({ path: "./config.env" });
+
+mongoose
+  .connect(process.env.MONGODB_LOCAL)
+  .then((data) => {
+    console.log("connecting to Mongoose");
+  })
+  .catch((err) => {
+    console.error("error connecting to Mongoose");
+  });
 
 app.listen(port, () => {
   console.log("server listening on " + port);
