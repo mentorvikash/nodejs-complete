@@ -9,10 +9,14 @@ const {
   updateMovies,
   deleteMovies,
   top5movie,
+  getMovieStats,
+  getMovieByGenres,
 } = movieController;
 
 // router.param("id");
 
+router.route("/get-movie-by-genres/:genres").get(getMovieByGenres);
+router.route("/getstats").get(getMovieStats);
 router.route("/top5movies").get(top5movie, getMovies);
 router.route("/").get(getMovies).post(createMovies);
 router

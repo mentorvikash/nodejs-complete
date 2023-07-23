@@ -1,4 +1,6 @@
+const { json } = require("express");
 const Movie = require("../models/movieModel");
+const ApiFeatures = require("./../utils/apiFeatures");
 
 exports.top5movie = (req, res, next) => {
   req.query.limit = 5;
@@ -6,102 +8,89 @@ exports.top5movie = (req, res, next) => {
   next();
 };
 
+exports.getMovieByGenres = async (req, res) => {
+  try {
+    const genres = req.params.genres;
+    const moviebyGenres = await Movie.aggregate([
+      { $unwind: "$genres" },
+      {
+        $group: {
+          _id: "$genres",
+          count: { $sum: 1 },
+          movies: { $push: "$name" },
+        },
+      },
+      { $sort: { count: -1 } },
+      // { $limit: 2 },
+      { $match: { count: { $gt: 2 } } },
+      { $addFields: { genres: "$_id" } },
+      { $project: { _id: 0 } },
+      { $match: { genres: genres } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      count: moviebyGenres.length,
+      data: { moviebyGenres },
+    });
+  } catch (error) {
+    res.status(404).json({ success: false, message: error.message });
+  }
+};
+
+exports.getMovieStats = async (req, res) => {
+  try {
+    const movieStats = await Movie.aggregate([
+      { $match: { rating: { $gte: 5.5 } } },
+      {
+        $group: {
+          // _id: null, // id value to null if group all documents
+          _id: "$releaseYear", // group data by some specific field
+          averageRating: { $avg: "$rating" },
+          averagePrice: { $avg: "$price" },
+          minPrice: { $min: "$price" },
+          maxPrice: { $max: "$price" },
+          totalPrice: { $sum: "$price" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { averageRating: -1 },
+      },
+      { $match: { minPrice: { $gte: 55 } } },
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      count: movieStats.length,
+      data: {
+        stats: movieStats,
+      },
+    });
+  } catch (error) {
+    return res.status(404).json({ success: false, error: error.message });
+  }
+};
+
 exports.getMovies = async (req, res) => {
   try {
-    // stage 1
-    // const allmovies = await Movie.find();
+    const moviesInstance = new ApiFeatures(Movie.find(), req.query)
+      .sort()
+      .filter()
+      .limitField()
+      .pagination();
 
-    // stage 2
-    // Query => ?duration=121&rating=5.5
-    // const allmovies = await Movie.find({
-    //   duration: +req.query.duration,
-    //   rating: req.query.rating,
-    // });
-
-    // internal Method (if not pass parameter not respond any data)
-    // const allmovies = await Movie.find()
-    //   .where({ duration: +req.query.duration })
-    //   .where({ rating: req.query.rating });
-
-    // stage 3
-    // const allmovies = await Movie.find(req.query);
-
-    // state 4 if pass more query parameters which does not exist
-    // Query => ?duration=121&rating=5.5&sort=-1&page=1
-
-    const excludeFileds = ["sort", "page", "limit", "fields", "skip"];
-    const newQuery = { ...req.query };
-
-    excludeFileds.forEach((el) => {
-      if (newQuery.hasOwnProperty(el)) {
-        delete newQuery[el];
-      }
-    });
-
-    // const allmovies = await Movie.find(newQuery);
-
-    // Stage 5
-    // implementing range filter
-    // const allmovies = await Movie.find().find({
-    //   duration: { $gte: +req.query.duration },
-    //   rating: { $gte: +req.query.rating },
-    // });
-
-    // We can also use interal mongooose internal methods (not work if field missing)
-    // const allmovies = await Movie.find()
-    //   .where("duration")
-    //   .gte(+req.query.duration)
-    //   .where("rating")
-    //   .gte(+req.query.rating);
-
-    // adding doller sign to gt lt lte and gte query string
-    let queryString = JSON.stringify(newQuery);
-    queryString = queryString.replace(
-      /\b(gt|lt|gte|lte)\b/g,
-      (match) => `$${match}`
-    );
-    const queryObject = JSON.parse(queryString);
-
-    // Stage 6
-    // Query => ?sort=-releaseYear,duration
-    let query = Movie.find(queryObject);
-
-    // Sorting Logic
-    if (req.query.sort) {
-      const sortString = req.query.sort.split(",").join(" ");
-      console.log(sortString);
-      query = query.sort(sortString);
-    } else {
-      query = query.sort({ createdAt: 1 });
-    }
-
-    // Selected limited fields (Progection in mongodb)
-    // Query => ?fields=name,description,rating
-    // Query => ?fields=-name,-description
-
-    if (req.query.fields) {
-      const fieldString = req.query.fields.split(",").join(" ");
-      query = query.select(fieldString);
-    } else {
-      query = query.select("-__v");
-    }
-
-    // Pagination when user send then page and limit as query string
-    // Query => ?page=5&limit=3
+    const allmovies = await moviesInstance.queryModel;
 
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 5;
     const skip = (page - 1) * limit;
-    query = query.skip(skip).limit(limit);
-
     if (req.query.page) {
       const movieCount = await Movie.countDocuments();
       if (skip >= movieCount) {
         throw new Error("No more data exist");
       }
     }
-
-    const allmovies = await query;
 
     return res
       .status(200)
