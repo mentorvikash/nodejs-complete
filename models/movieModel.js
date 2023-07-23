@@ -36,6 +36,7 @@ const movieSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
+    select: false, // use when don't want to show some field in response
   },
   genres: {
     type: [String],
