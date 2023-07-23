@@ -1,9 +1,10 @@
 const fs = require("fs");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const path = require("path");
 const Movie = require("../models/movieModel");
 
-dotenv.config({ path: "../config.env" });
+dotenv.config({ path: path.join(__dirname, "../config.env") });
 
 mongoose
   .connect(process.env.MONGODB_LOCAL, {
@@ -16,7 +17,9 @@ mongoose
     console.log("something went wrong with mongodb " + error.message);
   });
 
-const moviesData = JSON.parse(fs.readFileSync("./demoMovie.json", "utf8"));
+const moviesData = JSON.parse(
+  fs.readFileSync(__dirname + "/demoMovie.json", "utf8")
+);
 
 const importMovie = async () => {
   try {
@@ -38,8 +41,6 @@ const deleteMovie = async () => {
   process.exit();
 };
 
-console.log(process.argv[2]);
-
 if (process.argv[2] === "--import") {
   importMovie();
 }
@@ -47,5 +48,4 @@ if (process.argv[2] === "--import") {
 if (process.argv[2] === "--delete") {
   console.log("i am in delete block");
   deleteMovie();
-  //   process.exit();
 }

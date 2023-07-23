@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "import": "node data/import-json-data.js --import",
+    "delete": "node data/import-json-data.js --delete"
   },
   "repository": {
     "type": "git",
