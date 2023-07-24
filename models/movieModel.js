@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const fs = require("fs");
+const validator = require("validator");
 
 const movieSchema = new mongoose.Schema(
   {
@@ -7,11 +8,14 @@ const movieSchema = new mongoose.Schema(
       type: String,
       required: [true, "title is required"],
       unique: true,
+      minLength: [4, "Not less than 4 characters"],
+      maxLength: [100, "Not more than 100 characters"],
     },
     name: {
       type: String,
       required: [true, "name is required"],
       unique: true,
+      validate: [validator.isAlpha, " Only Accept contain alpha characters"],
     },
     description: {
       type: String,
@@ -24,6 +28,14 @@ const movieSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
+      // min: [1, "rating must be more then 1"],
+      // max: [10, "rating must be less then 10"],
+      validate: {
+        validator: (value) => {
+          return value >= 1 && value <= 10;
+        },
+        message: "value ({Value}) must be greater than 1 or equal to 10",
+      },
     },
     totalRating: {
       type: Number,
@@ -47,6 +59,20 @@ const movieSchema = new mongoose.Schema(
     directors: {
       type: [String],
       required: [true, "genres are required"],
+      // enum: {
+      //   values: [
+      //     "Drama",
+      //     "Comedy",
+      //     "Family",
+      //     "Romantic",
+      //     "Dramja",
+      //     "Romancje",
+      //     "Romance",
+      //     "Adventure",
+      //     "Action",
+      //   ],
+      //   message: "this genres is not supported",
+      // },
     },
     coverImage: {
       type: [String],
