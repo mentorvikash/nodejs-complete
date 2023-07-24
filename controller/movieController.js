@@ -1,6 +1,7 @@
 const Movie = require("../models/movieModel");
 const ApiFeatures = require("./../utils/apiFeatures");
 const asynErrorHandler = require("./../utils/asynErrorHandler");
+const CustomError = require("./../utils/customError");
 
 exports.top5movie = (req, res, next) => {
   req.query.limit = 5;
@@ -97,6 +98,11 @@ exports.getSingleMovies = asynErrorHandler(async (req, res, next) => {
   // const singlemovies = await Movie.find({_id: req.params.id});
   const movieData = await Movie.findById(req.params.id);
 
+  if (!movieData) {
+    const error = new CustomError("no data found for this id", 404);
+    return next(error);
+  }
+
   return res.status(200).json({ success: true, data: { movieData } });
 });
 
@@ -110,13 +116,25 @@ exports.updateMovies = asynErrorHandler(async (req, res) => {
     new: true,
     runValidators: true,
   });
+
+  if (!updatedMovie) {
+    const error = new CustomError("no data found for this id", 404);
+    return next(error);
+  }
+
   // const updatedMovie = await Movie.updateOne({ _id: id }, req.body);
   res.status(200).json({ success: true, data: { updatedMovie } });
 });
 
 exports.deleteMovies = asynErrorHandler(async (req, res) => {
   const { id } = req.params;
-  await Movie.deleteOne({ _id: id });
+  const deletdMovie = await Movie.deleteOne({ _id: id });
+
+  if (!deletdMovie) {
+    const error = new CustomError("no data found for this id", 404);
+    return next(error);
+  }
+
   res
     .status(200)
     .json({ success: true, message: "movie successfully deleted" });

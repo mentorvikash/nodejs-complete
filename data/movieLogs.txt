@@ -18,3 +18,8 @@ a new movie search performance took 3 miliseconds
 a new movie search performance took 3 miliseconds
 a new movie search performance took 1 miliseconds
 a new movie search performance took 5 miliseconds
+a new movie search performance took 11 miliseconds
+a new movie search performance took 2 miliseconds
+a new movie search performance took 4 miliseconds
+a new movie search performance took 13 miliseconds
+a new movie search performance took 3 miliseconds
