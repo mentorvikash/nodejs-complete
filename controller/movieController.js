@@ -84,8 +84,12 @@ exports.getMovies = asynErrorHandler(async (req, res, next) => {
   const skip = (page - 1) * limit;
   if (req.query.page) {
     const movieCount = await Movie.countDocuments();
+
     if (skip >= movieCount) {
-      throw new Error("No more data exist");
+      // throw new Error("No more data exist");
+
+      const error = new CustomError("No more data exist", 404);
+      return next(error);
     }
   }
 

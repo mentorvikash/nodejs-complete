@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
+    "dev": "SET NODE_ENV=development& nodemon server.js",
     "import": "node data/import-json-data.js --import",
     "delete": "node data/import-json-data.js --delete"
   },

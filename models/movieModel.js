@@ -8,8 +8,8 @@ const movieSchema = new mongoose.Schema(
       type: String,
       required: [true, "title is required"],
       unique: true,
-      minLength: [4, "Not less than 4 characters"],
-      maxLength: [100, "Not more than 100 characters"],
+      minLength: [4, "title not less than 4 characters"],
+      maxLength: [100, "title not more than 100 characters"],
     },
     name: {
       type: String,
@@ -34,7 +34,7 @@ const movieSchema = new mongoose.Schema(
         validator: (value) => {
           return value >= 1 && value <= 10;
         },
-        message: "value ({Value}) must be greater than 1 or equal to 10",
+        message: "Rating value {VALUE} must be in range [1, 10]",
       },
     },
     totalRating: {
