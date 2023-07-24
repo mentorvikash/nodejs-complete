@@ -1,4 +1,3 @@
-const app = require("./app.js");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 4000;
@@ -10,12 +9,11 @@ process.on("uncaughtException", (error) => {
   process.exit(1);
 });
 
+const app = require("./app.js");
+
 mongoose.connect(process.env.MONGODB_LOCAL).then((data) => {
   console.log("connecting to Mongoose");
 });
-// .catch((err) => {
-//   console.error("error connecting to Mongoose");
-// });
 
 const server = app.listen(port, () => {
   console.log("server listening on " + port);
