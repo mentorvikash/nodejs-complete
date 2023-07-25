@@ -7,7 +7,7 @@ const html = fs.readFileSync("./index.html", "utf-8");
 
 const server = http.createServer((request, response) => {
   let path = request.url;
-  console.log(path);
+
   if ((path === "/home") | (path === "/")) {
     response.writeHead(200, {
       "Content-Type": "text/html",

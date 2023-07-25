@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 let app = express();
+const authRouter = require("./routes/authRoute");
 const userRouter = require("./routes/userRoute");
 const movieRouter = require("./routes/movieRoute");
 const curtomError = require("./utils/customError");
@@ -18,6 +19,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/movie", movieRouter);
 app.all("*", (req, res, next) => {
