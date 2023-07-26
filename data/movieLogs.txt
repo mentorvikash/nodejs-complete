@@ -50,3 +50,23 @@ a new movie search performance took 6 miliseconds
 A new movie with tilte newmovietitle is added createdJhakash movie by revive coding
 a new movie search performance took 29 miliseconds
 a new movie search performance took 6 miliseconds
+a new movie search performance took 15 miliseconds
+a new movie search performance took 11 miliseconds
+a new movie search performance took 14 miliseconds
+a new movie search performance took 9 miliseconds
+a new movie search performance took 11 miliseconds
+a new movie search performance took 5 miliseconds
+a new movie search performance took 6 miliseconds
+a new movie search performance took 4 miliseconds
+a new movie search performance took 5 miliseconds
+a new movie search performance took 5 miliseconds
+a new movie search performance took 4 miliseconds
+a new movie search performance took 9 miliseconds
+a new movie search performance took 6 miliseconds
+a new movie search performance took 7 miliseconds
+a new movie search performance took 6 miliseconds
+a new movie search performance took 6 miliseconds
+a new movie search performance took 5 miliseconds
+a new movie search performance took 7 miliseconds
+a new movie search performance took 3 miliseconds
+a new movie search performance took 9 miliseconds

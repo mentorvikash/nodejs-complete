@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const movieController = require("../controller/movieController");
+const authController = require("../controller/authController");
 
 const {
   getMovies,
@@ -13,16 +14,18 @@ const {
   getMovieByGenres,
 } = movieController;
 
+const { protect } = authController;
+
 // router.param("id");
 
 router.route("/get-movie-by-genres/:genres").get(getMovieByGenres);
 router.route("/getstats").get(getMovieStats);
 router.route("/top5movies").get(top5movie, getMovies);
-router.route("/").get(getMovies).post(createMovies);
+router.route("/").get(protect, getMovies).post(createMovies);
 router
   .route("/:id")
-  .get(getSingleMovies)
+  .get(protect, getSingleMovies)
   .patch(updateMovies)
-  .delete(deleteMovies);
+  .delete(protect, deleteMovies);
 
 module.exports = router;

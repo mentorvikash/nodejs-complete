@@ -17,6 +17,14 @@ const handleValidationError = (error) => {
   return new customErrror(msg, 400);
 };
 
+const handleExpiredJwt = (error) => {
+  return new customErrror("JWT as expired please login again", 401);
+};
+
+const handleJwtError = (error) => {
+  return new customErrror("Invalid token please login again", 401);
+};
+
 const developmentErr = (res, error) => {
   res.status(error.statusCode).json({
     status: error.status,
@@ -56,6 +64,12 @@ module.exports = (error, req, res, next) => {
     }
     if (error.name === "ValidationError") {
       error = handleValidationError(error);
+    }
+    if (error.name === "TokenExpiredError") {
+      error = handleExpiredJwt(error);
+    }
+    if (error.name === "JsonWebTokenError") {
+      error = handleJwtError(error);
     }
     return productionErr(res, error);
   }

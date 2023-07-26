@@ -32,6 +32,7 @@ const employeeSchema = new mongoose.Schema({
       message: "password and confirm password not match",
     },
   },
+  passwordChangedAt: Date,
 });
 
 employeeSchema.pre("save", async function (next) {
@@ -42,6 +43,22 @@ employeeSchema.pre("save", async function (next) {
   this.confirmPassword = undefined;
   next();
 });
+
+employeeSchema.methods.compairpassword = async function (pass, passDB) {
+  return await bcrypt.compare(pass, passDB);
+};
+
+employeeSchema.methods.isPasswordChanged = async function (jwttimestamp) {
+  if (this.passwordChangedAt) {
+    // convert time in milliseconds to convet to seconds and change to base 10 integer
+    const passWordCreatedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+    return passWordCreatedTimeStamp > jwttimestamp;
+  }
+  return false;
+};
 
 const Employee = mongoose.model("Employee", employeeSchema);
 
