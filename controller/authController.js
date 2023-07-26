@@ -54,6 +54,28 @@ exports.signIn = asynErrorHandler(async (req, res, next) => {
   return res.status(200).json({ status: "pass", token, data: {} });
 });
 
+exports.forgetPassword = asynErrorHandler(async (req, res, next) => {
+  const employeeData = await Employee.findOne({ email: req.body.email });
+  // check if employee exist
+  if (!employeeData) {
+    const err = new customError(
+      "user not exist in database please check email",
+      401
+    );
+    return next(err);
+  }
+
+  const resetToken = await employeeData.createForgetPasswordToken();
+
+  await employeeData.save({ validateBeforeSave: false });
+
+  res.status(200).json({ status: "pass", resetToken });
+});
+
+exports.resetforgetPassword = asynErrorHandler(async (req, res, next) => {
+  //
+});
+
 exports.getAllEmployee = asynErrorHandler(async (req, res, next) => {
   const allEmployee = await Employee.find();
   return res
@@ -95,7 +117,20 @@ exports.protect = asynErrorHandler(async (req, res, next) => {
     next(err);
   }
   // allow user to access protected routes
-  res.employee = employee;
+  req.employee = employee;
 
   next();
 });
+
+exports.restrictUsrs = async (req, res, next) => {
+  const employee = req.employee;
+  console.log({ employee });
+  if (employee.role === "user") {
+    const err = new customError(
+      "You are not allowed to perform this action",
+      401
+    );
+    next(err);
+  }
+  next();
+};

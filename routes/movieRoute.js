@@ -14,7 +14,7 @@ const {
   getMovieByGenres,
 } = movieController;
 
-const { protect } = authController;
+const { protect, restrictUsrs } = authController;
 
 // router.param("id");
 
@@ -26,6 +26,6 @@ router
   .route("/:id")
   .get(protect, getSingleMovies)
   .patch(updateMovies)
-  .delete(protect, deleteMovies);
+  .delete(protect, restrictUsrs, deleteMovies);
 
 module.exports = router;

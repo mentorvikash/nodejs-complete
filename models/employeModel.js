@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const validator = require("validator");
+const crypto = require("crypto");
 
 const employeeSchema = new mongoose.Schema({
   name: {
@@ -16,6 +17,11 @@ const employeeSchema = new mongoose.Schema({
     unique: true,
   },
   photo: String,
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+  },
   password: {
     type: String,
     required: [true, "password is required"],
@@ -31,6 +37,12 @@ const employeeSchema = new mongoose.Schema({
       },
       message: "password and confirm password not match",
     },
+  },
+  forgetPasswordToken: {
+    type: String,
+  },
+  forgetPasswordTokenExpireTime: {
+    type: Date,
   },
   passwordChangedAt: Date,
 });
@@ -58,6 +70,17 @@ employeeSchema.methods.isPasswordChanged = async function (jwttimestamp) {
     return passWordCreatedTimeStamp > jwttimestamp;
   }
   return false;
+};
+
+employeeSchema.methods.createForgetPasswordToken = async function () {
+  const randomToken = crypto.randomBytes(32).toString("hex");
+  this.forgetPasswordToken = crypto
+    .createHash("sha256")
+    .update(randomToken)
+    .digest("hex");
+
+  this.forgetPasswordTokenExpireTime = Date.now() + 10 * 60 * 1000;
+  return randomToken;
 };
 
 const Employee = mongoose.model("Employee", employeeSchema);

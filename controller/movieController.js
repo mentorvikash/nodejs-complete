@@ -130,7 +130,7 @@ exports.updateMovies = asynErrorHandler(async (req, res) => {
   res.status(200).json({ success: true, data: { updatedMovie } });
 });
 
-exports.deleteMovies = asynErrorHandler(async (req, res) => {
+exports.deleteMovies = asynErrorHandler(async (req, res, next) => {
   const { id } = req.params;
   const deletdMovie = await Movie.deleteOne({ _id: id });
 
